@@ -1,0 +1,64 @@
+
+#Author : Manoj Kumar Reddy Lingala (886517)
+
+- name: JVM,Python,CouchDB Installation
+  hosts: Servers
+  sudo: yes
+   
+  tasks:
+
+  - name: Add Java repository to sources
+    action: apt_repository repo='ppa:webupd8team/java'
+
+  - name: Autoaccept license for Java
+    action: shell echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
+
+  - name: Update APT package cache
+    action: apt update_cache=yes
+
+  - name: Install Java 8
+    action: apt pkg=oracle-java8-installer state=latest install_recommends=yes
+
+  - name: Set Java 8 Env
+    action: apt pkg=oracle-java8-set-default state=latest install_recommends=yes
+   
+  - name: Couch DB Pre - requisties
+    shell: apt-get --no-install-recommends -y install  build-essential pkg-config erlang  libicu-dev libmozjs185-dev libcurl4-openssl-dev
+
+  - name: download CouchDB 2.0
+    get_url: url=http://www-eu.apache.org/dist/couchdb/source/2.0.0/apache-couchdb-2.0.0.tar.gz  dest=/tmp/
+
+  - name: unarchive the .tar.gz file
+    shell: tar -xvzf apache-couchdb-2.0.0.tar.gz chdir=/tmp
+    tags: unarchive
+
+  - name: execute configure
+    shell: ./configure chdir=/tmp/apache-couchdb-2.0.0
+    tags: configure
+    async: 1800
+
+  - name: execute make
+    shell: chdir=/tmp/apache-couchdb-2.0.0 {{ item }}
+    with_items:
+    - make release
+    tags: make
+
+  - name: copy the rel/couchdb folder to /usr/local/lib/
+    shell: cp -r /tmp/apache-couchdb-2.0.0/rel/couchdb /usr/local/lib
+
+  - name: apply the Cluster node configuration
+    copy: src=cluster.local.ini dest=/usr/local/lib/couchdb/etc/local.ini
+
+  - name: install the sysv script to run CouchDB as a service
+    copy: src=couchdb dest=/etc/init.d/couchdb mode=0755
+
+  - name: start CouchDB and ensure it is enabled at boot time
+    service: name=couchdb state=started enabled=yes
+
+  - name: Makedirectory - Create if not exist
+    file: path=/home/ubuntu/dbpopulate state=directory
+
+  - name: Connect to BitBucket and release the code onto the server
+    get_url: url=https://bitbucket.org/dmeggyesy/ccc27-binaries/get/d66267bf9fdd.zip  dest=/home/ubuntu/dbpopulate
+
+  - include: configure-cluster.yaml
