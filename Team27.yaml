@@ -61,4 +61,7 @@
   - name: Connect to BitBucket and release the code onto the server
     get_url: url=https://bitbucket.org/dmeggyesy/ccc27-binaries/get/d66267bf9fdd.zip  dest=/home/ubuntu/dbpopulate
 
+  - name: Release the binaried onto the servers
+    copy: src=d66267bf9fdd.zip dest=/home/ubuntu/dbpopulate
+
   - include: configure-cluster.yaml
