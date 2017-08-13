@@ -6,8 +6,8 @@ from boto.ec2.regioninfo import *
 #Access and Secret Key are specific to team cc27
 
 region = RegionInfo(name="NeCTAR", endpoint="nova.rc.nectar.org.au")
-connection = boto.connect_ec2(aws_access_key_id="616e0108b1bb4692aaded11e4675372b",
-                    aws_secret_access_key="6a691b057ae34c2f8bfd9006f748587e",
+connection = boto.connect_ec2(aws_access_key_id="",
+                    aws_secret_access_key="",
                     is_secure=True,
                     region=region,
                     validate_certs=False,
