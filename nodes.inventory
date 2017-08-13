@@ -1,7 +1,7 @@
 #This inventory group lists all the nodes on which we will install CouchDB2 
 #It will be automatically configure  to be in a cluster if configure_cluster is set to True 
 [Servers]
-130.56.253.173 configure_cluster=True
-130.56.253.176 configure_cluster=True
-130.56.253.178 configure_cluster=True
-130.56.253.180 configure_cluster=True
+Server1 configure_cluster=True
+Server2 configure_cluster=True
+Server3 configure_cluster=True
+Server4 configure_cluster=True
